@@ -10,6 +10,7 @@ object Application extends UserController
                    with UserRepositoryComponentImpl {
 
   def index = Action {
+    println("git test")
     Ok("test")
   }
 
