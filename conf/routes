@@ -9,5 +9,9 @@ GET     /users/:id                  controllers.Application.findUserById(id: Lon
 PUT     /users/:id                  controllers.Application.updateUser(id: Long)
 DELETE  /users/:id                  controllers.Application.deleteUser(id: Long)
 
+GET     /db/create/schema           controllers.Application.createSchema
+GET     /db/drop/schema             controllers.Application.dropSchema
+GET     /test                       controllers.Application.test
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

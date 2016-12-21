@@ -9,7 +9,7 @@ import services.user.UserServiceComponent
 import domain.user.User
 
 trait UserController extends Controller {
-    self: UserServiceComponent =>0
+    self: UserServiceComponent =>
 
     def emailAlreadyExists(implicit reads: Reads[String]) =
         Reads[String](js => reads.reads(js).flatMap { e =>
