@@ -17,3 +17,5 @@ To test validation rules:
     An email that already exists for a user
     curl -X POST http://localhost:9000/users -H "Content-Type: application/json" -d "{\"email\": \"test@test.com\"}"
     curl -X POST http://localhost:9000/users -H "Content-Type: application/json" -d "{\"email\": \"test@test.com\"}"
+
+add
