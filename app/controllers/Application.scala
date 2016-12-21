@@ -1,8 +1,7 @@
 package controllers
 
-import play.api._
-import play.api.mvc._
 import controllers.user.UserController
+import play.api.mvc._
 import services.user.UserServiceComponentImpl
 import repositories.user.UserRepositoryComponentImpl
 
@@ -11,7 +10,7 @@ object Application extends UserController
                    with UserRepositoryComponentImpl {
 
   def index = Action {
-    Ok(views.html.index("Your new application is ready."))
+    Ok("test")
   }
 
 }
