@@ -1,16 +1,16 @@
 package controllers.user
 
-import play.api._
 import play.api.mvc._
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import services.user.UserServiceComponent
 import domain.user.User
+import org.slf4j.{Logger, LoggerFactory}
 
 trait UserController extends Controller {
     self: UserServiceComponent =>
-
+    implicit val log: Logger = LoggerFactory.getLogger(getClass)
     def emailAlreadyExists(implicit reads: Reads[String]) =
         Reads[String](js => reads.reads(js).flatMap { e =>
           userService.tryFindByEmail(e).map(_ => JsError("error.custom.emailAlreadyExists")).getOrElse(JsSuccess(e))
@@ -63,7 +63,7 @@ trait UserController extends Controller {
             valid = block,
             invalid = e => {
                 val error = e.mkString
-                Logger.error(error)
+                log.error(error)
                 BadRequest(error)
             }
         )

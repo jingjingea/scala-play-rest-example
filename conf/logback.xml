@@ -1,0 +1,25 @@
+<!--
+  ~ Copyright (C) 2009-2016 Lightbend Inc. <https://www.lightbend.com>
+  -->
+<!-- The default logback configuration that Play uses in dev mode if no other configuration is provided -->
+<configuration scan="true" scanPeriod="30 seconds" debug="true">
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date{HH:mm:ss.SSS} [%level] %logger - %message%n%xException{10}</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="play" level="DEBUG" />
+    <logger name="application" level="DEBUG"/>
+    <logger name="slick" level="DEBUG"/>
+    <logger name="com.zaxxer.hikari.pool.HikariPool" level="INFO"/>
+    <logger name="slick.compiler" level="INFO"/>
+    <logger name="slick.relational.ResultConverterCompiler" level="INFO"/>
+    <logger name="com.zaxxer.hikari.pool.PoolUtilities" level="INFO"/>
+    <logger name="com.gargoylesoftware.htmlunit.javascript" level="OFF" />
+
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>

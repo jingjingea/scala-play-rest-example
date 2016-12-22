@@ -12,7 +12,9 @@ libraryDependencies ++= Seq(
   jdbc,
   cache,
   ws,
+  // postgres jdbc
   "org.postgresql" % "postgresql" % "9.4-1201-jdbc41",
+  // slick
   "com.typesafe.slick" %% "slick" % "3.1.1",
   "com.typesafe.slick" %% "slick-hikaricp" % "3.1.1",
   specs2 % Test
