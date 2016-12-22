@@ -19,10 +19,9 @@ object Application extends UserController
                    with UserRepositoryComponentImpl {
 
   def index = Action {
-    println("git test")
     Ok("test")
   }
-
+/*
   def createSchema = Action {
     mydb.MyDatabase.createSchema()
     Ok("create schema")
@@ -32,9 +31,11 @@ object Application extends UserController
     mydb.MyDatabase.dropSchema()
     Ok("drop schema")
   }
-
+*/
   def test =  Action.async { implicit request =>
-    lemsdb.run(UserInfoTable.map(user => (user.name, user.passwd, user.realName, user.authKey)) += ("test", "1234", "trealName", "authKey")).flatMap{ result =>
+    lemsdb.run(UserInfoTable.map(user =>
+      (user.name, user.passwd, user.realName, user.authKey)) += ("test", "1234", "realName", "authKey")
+    ).flatMap{ result =>
       Future(Ok("insert data"))
     }
   }

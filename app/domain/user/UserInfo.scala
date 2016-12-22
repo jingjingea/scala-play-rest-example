@@ -8,11 +8,11 @@ case class UserInfo(name: String,
                 email: Option[String],
                 tel: Option[String],
                 authKey: String,
-                UserInfoId: Long = 0L
+                userInfoId: Long = 0L
                )
 
 // USERINFO
-class UserInfoTable(tag: Tag) extends Table[UserInfo](tag, "userinfo") {
+class UserInfoTable(tag: Tag) extends Table[UserInfo](tag, "UserInfo") {
   def name = column[String]("name", O.Length(30))
   def passwd = column[String]("passwd")
   def realName = column[String]("realname", O.Length(30))
@@ -24,7 +24,7 @@ class UserInfoTable(tag: Tag) extends Table[UserInfo](tag, "userinfo") {
   def ukName = index("userInfo_name_uk", name, unique = true)
 
   // Every table needs a * projection with the same type as the table's type parameter
-  def * = (name, passwd, realName, email, tel, authKey, userInfoId) <> (UserInfo.tupled, UserInfo.unapply)
+  override def * = (name, passwd, realName, email, tel, authKey, userInfoId) <> (UserInfo.tupled, UserInfo.unapply)
 }
 
 object UserInfoTable extends TableQuery(new UserInfoTable(_)) {

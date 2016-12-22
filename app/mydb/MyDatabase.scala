@@ -30,6 +30,7 @@ object MyDatabase {
   }
 
   def createSchema(): Unit = {
+    Logger.info("#########################")
     Logger.info("## call createStatements.")
     val createTableFuture = lemsdb.run(MySchema.createTable.transactionally)
     createTableFuture.onSuccess {case s => Logger.info(s"DB Schema Create Success: $s") }
@@ -37,6 +38,7 @@ object MyDatabase {
   }
 
   def dropSchema(): Unit = {
+    Logger.info("#########################")
     Logger.info("## call dropSchema.")
     val future = lemsdb.run(MySchema.drop.transactionally)
     future.onSuccess { case s => Logger.info(s"DB Schema Drop Success: $s") }
