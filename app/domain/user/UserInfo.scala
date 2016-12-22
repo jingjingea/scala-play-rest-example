@@ -21,7 +21,7 @@ class UserInfoTable(tag: Tag) extends Table[UserInfo](tag, "userinfo") {
   def authKey = column[String]("authkey")
   def userInfoId = column[Long]("userinfoid", O.PrimaryKey, O.AutoInc)
 
-  def ukName = index("userInfo_name_uk", name, unique = true)
+  def ukName = index("userinfo_name_uk", name, unique = true)
 
   // Every table needs a * projection with the same type as the table's type parameter
   def * = (name, passwd, realName, email, tel, authKey, userInfoId) <> (UserInfo.tupled, UserInfo.unapply)
