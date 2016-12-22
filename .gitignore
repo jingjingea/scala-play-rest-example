@@ -16,3 +16,4 @@ dist
 /.cache
 /RUNNING_PID
 /.settings
+/conf/db-dev.conf
