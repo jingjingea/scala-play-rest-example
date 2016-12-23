@@ -16,7 +16,7 @@ trait UserController extends Controller {
           userService.tryFindByEmail(e).map(_ => JsError("error.custom.emailAlreadyExists")).getOrElse(JsSuccess(e))
         })
 
-    implicit val userReads = (__ \ "email").read[String](email andKeep emailAlreadyExists)
+    implicit val userReads = (__ \ "email").read[String](email andKeep emailAlreadyExists) // __ means?
                                            .map(resource => UserResource(resource))
     
     implicit val userWrites = new Writes[User] {
