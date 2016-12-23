@@ -11,7 +11,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object UserInfoApplication extends UserInfoController with UserInfoServiceComponentImpl {
-    // Controller has only Action interface
+    // Controller has only Action interfacetest
 
     def index = Action {
         Ok("user info application index")
