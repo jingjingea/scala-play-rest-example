@@ -17,7 +17,9 @@ DELETE  /users/:id                  controllers.Application.deleteUser(id: Long)
 GET     /                           controllers.UserInfoApplication.index
 # POST    /user_infos                 controllers.UserInfoApplication.createUserInfo
 
-GET     /test                       controllers.UserInfoApplication.test
+GET     /test/:num                  controllers.UserInfoApplication.test(num: Int)
+
+GET     /user_infos/:id             controllers.UserInfoApplication.findUserInfoById(id: Long)
 
 GET     /db/create/schema           controllers.UserInfoApplication.createSchema
 GET     /db/drop/schema             controllers.UserInfoApplication.dropSchema

@@ -27,8 +27,10 @@ object UserInfoApplication extends UserInfoController with UserInfoServiceCompon
         mydb.MyDatabase.dropSchema()
         Ok("drop schema")
     }
-    def test = Action.async { implicit request =>
-        lemsdb.run(UserInfoTable.map(user => (user.name, user.passwd, user.realName, user.authKey)) += ("test", "1234", "realName", "authKey")).flatMap{ result =>
+    def test(num: Int) = Action.async { implicit request =>
+        lemsdb.run(UserInfoTable.map(user =>
+            (user.name, user.passwd, user.realName, user.authKey)) += ("test" + num, "1234", "realName", "authKey")
+        ).flatMap{ result =>
             Future(Ok("insert user info data"))
         }
     }
