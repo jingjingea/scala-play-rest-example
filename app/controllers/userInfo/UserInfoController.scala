@@ -29,14 +29,14 @@ trait UserInfoController extends Controller {
         (JsPath \ "userInfoId").write[Long]
     )(unlift(UserInfo.unapply))
 
-    def findUserInfoById(id: Long) = Action {
-        val userInfo = userInfoService.tryFindById(id)
-        if (userInfo.isDefined) {
-            Ok(Json.toJson(userInfo))
-        } else {
-            NotFound
-        }
-    }
+//    def findUserInfoById(id: Long) = Action {
+//        val userInfo = userInfoService.tryFindById(id)
+//        if (userInfo.isDefined) {
+//            Ok(Json.toJson(userInfo))
+//        } else {
+//            NotFound
+//        }
+//    }
 
 }
 

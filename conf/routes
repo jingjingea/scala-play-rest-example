@@ -18,8 +18,9 @@ GET     /                           controllers.UserInfoApplication.index
 # POST    /user_infos                 controllers.UserInfoApplication.createUserInfo
 
 GET     /test/:num                  controllers.UserInfoApplication.test(num: Int)
+GET     /test1                  controllers.UserInfoApplication.test1()
 
-GET     /user_infos/:id             controllers.UserInfoApplication.findUserInfoById(id: Long)
+#GET     /user_infos/:id             controllers.UserInfoApplication.findUserInfoById(id: Long)
 
 GET     /db/create/schema           controllers.UserInfoApplication.createSchema
 GET     /db/drop/schema             controllers.UserInfoApplication.dropSchema
