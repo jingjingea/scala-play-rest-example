@@ -38,6 +38,7 @@ object UserInfoApplication extends UserInfoController with UserInfoServiceCompon
     }
 
     def test1() = Action.async { implicit request =>
+      // test
         val test1 = UserInfoTable += UserInfo("name1", "1234", "test", Some("jingjingea@nate.com"), Some("010-1231234"), "auth")
         val test2 = UserInfoTable += UserInfo("name2", "1234", "test", Some("jingjingea@nate.com"), Some("010-1231234"), "auth")
         val test3 = UserInfoTable += UserInfo("name3", "1234", "test", Some("jingjingea@nate.com"), Some("010-1231234"), "auth")
