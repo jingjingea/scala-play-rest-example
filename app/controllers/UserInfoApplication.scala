@@ -11,7 +11,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object UserInfoApplication extends UserInfoController with UserInfoServiceComponentImpl {
-    // Controller has only Action interfacetest
+    // Controller has only Action interface
 
     def index = Action {
         Ok("user info application index")
@@ -31,9 +31,6 @@ object UserInfoApplication extends UserInfoController with UserInfoServiceCompon
         val test: UserInfo = UserInfo("name", "1234", "test", Some("jingjingea@nate.com"), Some("010-1231234"), "auth")
         userInfoService.createUserInfo(test) map { (createdCnt: Int) =>
             Ok(s"$createdCnt 개 add")
-        }
-        userInfoService.createUserInfo(test) flatMap { (createdCnt: Int) =>
-            Future(Ok(s"$createdCnt 개 add"))
         }
     }
 

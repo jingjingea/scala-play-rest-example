@@ -18,6 +18,7 @@
     <logger name="slick.relational.ResultConverterCompiler" level="INFO"/>
     <logger name="com.zaxxer.hikari.pool.PoolUtilities" level="INFO"/>
     <logger name="com.gargoylesoftware.htmlunit.javascript" level="OFF" />
+    <logger name="com.google.inject.internal.BytecodeGen" level="OFF" />
 
     <root level="DEBUG">
         <appender-ref ref="STDOUT" />

@@ -37,7 +37,10 @@ trait UserInfoServiceComponentImpl extends UserInfoServiceComponent {
         }
 
         override def tryFindById(id: Long) = {
-            lemsdb.run(UserInfoTable.filter(_.userInfoId === id).result.headOption)
+
+            val test: Future[Option[UserInfo]] = lemsdb.run(UserInfoTable.filter(_.userInfoId === id).result.headOption)
+
+            val test1: Future[Seq[UserInfo]] = lemsdb.run(UserInfoTable.filter(_.userInfoId === id).result)
         }
 
         override def delete(id: Long) = {
