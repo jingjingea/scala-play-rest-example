@@ -12,7 +12,7 @@ case class UserInfo(name: String,
                )
 
 // USERINFO
-class UserInfoTable(tag: Tag) extends Table[UserInfo](tag, "UserInfo") {
+class UserInfoTable(tag: Tag) extends Table[UserInfo](tag, "userinfo") {
   def name = column[String]("name", O.Length(30))
   def passwd = column[String]("passwd")
   def realName = column[String]("realname", O.Length(30))
