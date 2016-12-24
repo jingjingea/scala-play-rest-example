@@ -3,7 +3,6 @@ package mydb
 import com.typesafe.config.ConfigFactory
 import org.slf4j.{Logger, LoggerFactory}
 import slick.driver.PostgresDriver.api._
-import org.slf4j.{Logger, LoggerFactory}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
