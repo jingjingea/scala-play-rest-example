@@ -44,7 +44,7 @@ trait UserInfoServiceComponentImpl extends UserInfoServiceComponent {
 
             val test1: Future[Seq[UserInfo]] = lemsdb.run(UserInfoTable.filter(_.userInfoId === id).result)
             println(UserInfoTable.filter(_.userInfoId === id).result.statements)
-    //      println(UserInfoTable.filter(_.userInfoId === id).map(m => ))
+     //      println(UserInfoTable.filter(_.userInfoId === id).map(m => ))
             println(test)
             println(test1)
             test
