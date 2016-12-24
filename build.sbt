@@ -19,5 +19,5 @@ libraryDependencies ++= Seq(
   "com.typesafe.slick" %% "slick-hikaricp" % "3.1.1",
   specs2 % Test
 )
-
+resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
 libraryDependencies += "org.mockito" % "mockito-core" % "1.9.5" % "test"
