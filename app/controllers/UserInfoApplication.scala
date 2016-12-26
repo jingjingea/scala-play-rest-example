@@ -28,7 +28,7 @@ object UserInfoApplication extends UserInfoController with UserInfoServiceCompon
     }
 
     def test(num: Int) = Action.async { implicit request =>
-        val test: UserInfo = UserInfo("name", "1234", "test", Some("jingjingea@nate.com"), Some("010-1231234"), "auth")
+        val test: UserInfo = UserInfo("name", "1234", "test", Some("jingjingea@nate.com"), Some("010-1231234"), 1, "auth")
         userInfoService.createUserInfo(test) map { (createdCnt: Int) =>
             Ok(s"$createdCnt 개 add")
         }
@@ -36,9 +36,9 @@ object UserInfoApplication extends UserInfoController with UserInfoServiceCompon
 
     def test1() = Action.async { implicit request =>
       // test
-        val test1 = UserInfoTable += UserInfo("name1", "1234", "test", Some("jingjingea@nate.com"), Some("010-1231234"), "auth")
-        val test2 = UserInfoTable += UserInfo("name2", "1234", "test", Some("jingjingea@nate.com"), Some("010-1231234"), "auth")
-        val test3 = UserInfoTable += UserInfo("name3", "1234", "test", Some("jingjingea@nate.com"), Some("010-1231234"), "auth")
+        val test1 = UserInfoTable += UserInfo("name1", "1234", "test", Some("jingjingea@nate.com"), Some("010-1231234"), 1, "auth")
+        val test2 = UserInfoTable += UserInfo("name2", "1234", "test", Some("jingjingea@nate.com"), Some("010-1231234"), 1, "auth")
+        val test3 = UserInfoTable += UserInfo("name3", "1234", "test", Some("jingjingea@nate.com"), Some("010-1231234"), 1, "auth")
         lemsdb.run(DBIO.seq(test1, test2, test3)) map { createdCnt =>
             Ok(s"$createdCnt 개 add")
         }

@@ -21,6 +21,7 @@ trait UserInfoController extends Controller {
       (__ \ "realName").read[String] and
       (__ \ "email").readNullable[String] and
       (__ \ "tel").readNullable[String] and
+      (__ \ "roleId").read[Long] and
       (__ \ "authKey").read[String] and
       (__ \ "userInfoId").read[Long]
     )(UserInfo.apply _)
@@ -31,6 +32,7 @@ trait UserInfoController extends Controller {
       (__ \ "realName").write[String] and
       (__ \ "email").writeNullable[String] and
       (__ \ "tel").writeNullable[String] and
+      (__ \ "roleId").write[Long] and
       (__ \ "authKey").write[String] and
       (__ \ "userInfoId").write[Long]
     )(unlift(UserInfo.unapply))

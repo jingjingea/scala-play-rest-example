@@ -1,9 +1,8 @@
 package repositories.user
 
-import domain.user.User
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
-
+/*
 trait UserRepositoryComponent {
     val userRepository: UserRepository
     
@@ -57,3 +56,4 @@ trait UserRepositoryComponentImpl extends UserRepositoryComponent {
     }
     
 }
+*/

@@ -11,7 +11,6 @@ import play.api._
 import play.api.mvc._
 import play.api.libs.json._
 import services.user.UserServiceComponent
-import domain.user.User
 
 class UserControllerTest {
     

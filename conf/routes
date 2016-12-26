@@ -3,15 +3,7 @@
 # ~~~~
 
 # Home page
-POST    /users                      controllers.Application.createUser
-GET     /users/:id                  controllers.Application.findUserById(id: Long)
-PUT     /users/:id                  controllers.Application.updateUser(id: Long)
-DELETE  /users/:id                  controllers.Application.deleteUser(id: Long)
-
 GET     /                           controllers.UserInfoApplication.index
-
-GET     /test/:num                  controllers.UserInfoApplication.test(num: Int)
-GET     /test1                      controllers.UserInfoApplication.test1()
 
 GET     /db/create/schema           controllers.UserInfoApplication.createSchema
 GET     /db/drop/schema             controllers.UserInfoApplication.dropSchema
@@ -21,6 +13,9 @@ POST    /user_infos                 controllers.UserInfoApplication.createUserIn
 # GET     /user_infos/:id             controllers.UserInfoApplication.findUserInfoById(id: Long)
 PUT     /user_infos/:id             controllers.UserInfoApplication.updateUserInfo(id: Long)
 DELETE  /user_infos/:id             controllers.UserInfoApplication.deleteUserInfo(id: Long)
+
+GET     /test/:num                  controllers.UserInfoApplication.test(num: Int)
+GET     /test1                      controllers.UserInfoApplication.test1()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
