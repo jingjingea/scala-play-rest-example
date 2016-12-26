@@ -10,6 +10,7 @@ import slick.driver.PostgresDriver.api._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
+// controller(실질적 Action interface 역할을 하는)는 어디서든 호출이 가능하도록 object로 선언
 object UserInfoApplication extends UserInfoController with UserInfoServiceComponentImpl {
     // Controller has only Action interface
 

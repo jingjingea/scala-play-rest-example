@@ -8,11 +8,18 @@ GET     /                           controllers.UserInfoApplication.index
 GET     /db/create/schema           controllers.UserInfoApplication.createSchema
 GET     /db/drop/schema             controllers.UserInfoApplication.dropSchema
 
+# UserInfo
 # GET     /user_infos                 controllers.UserInfoApplication.getList
 POST    /user_infos                 controllers.UserInfoApplication.createUserInfo
 # GET     /user_infos/:id             controllers.UserInfoApplication.findUserInfoById(id: Long)
 PUT     /user_infos/:id             controllers.UserInfoApplication.updateUserInfo(id: Long)
 DELETE  /user_infos/:id             controllers.UserInfoApplication.deleteUserInfo(id: Long)
+
+# Role
+POST    /role                       controllers.RoleApplication.createRole
+
+# Priv
+POST    /priv                       controllers.PrivApplication.createPriv
 
 GET     /test/:num                  controllers.UserInfoApplication.test(num: Int)
 GET     /test1                      controllers.UserInfoApplication.test1()

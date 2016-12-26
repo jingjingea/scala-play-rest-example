@@ -13,8 +13,7 @@ class RolePrivLstTable(tag: Tag) extends Table[RolePrivLst](tag, "roleprivlst") 
   def privId = column[Long]("privid")
   def roleId = column[Long]("roleid")
 
-  def ukPrivId = index("privid_uk", privId, unique = true)
-  def ukRoleId = index("roleid_uk", roleId, unique = true)
+  def ukPrivId = index("role_priv_lst_uk", (roleId, privId), unique = true)
 
   def privId_fk = foreignKey("privid_fk", privId, PrivTable)(_.privId)
   def roleId_fk = foreignKey("roleid_fk", roleId, RoleTable)(_.roleId)

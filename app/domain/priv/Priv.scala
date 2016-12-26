@@ -4,7 +4,7 @@ import slick.driver.PostgresDriver.api._
 
 case class Priv(name: String,
                 key: Long,
-                privId: Long)
+                privId: Long = 0L)
 
 class PrivTable(tag: Tag) extends Table[Priv](tag, "priv") {
   def name = column[String]("name", O.Length(30))

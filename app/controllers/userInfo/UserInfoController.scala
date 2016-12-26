@@ -15,28 +15,6 @@ trait UserInfoController extends Controller {
 
   implicit val log: Logger = LoggerFactory.getLogger(getClass)
 
-  implicit def userInfoReads: Reads[UserInfo] = (
-    (__ \ "name").read[String] and
-      (__ \ "passwd").read[String] and
-      (__ \ "realName").read[String] and
-      (__ \ "email").readNullable[String] and
-      (__ \ "tel").readNullable[String] and
-      (__ \ "roleId").read[Long] and
-      (__ \ "authKey").read[String] and
-      (__ \ "userInfoId").read[Long]
-    )(UserInfo.apply _)
-
-  implicit def userInfoWrites: Writes[UserInfo] = (
-    (__ \ "name").write[String] and
-      (__ \ "passwd").write[String] and
-      (__ \ "realName").write[String] and
-      (__ \ "email").writeNullable[String] and
-      (__ \ "tel").writeNullable[String] and
-      (__ \ "roleId").write[Long] and
-      (__ \ "authKey").write[String] and
-      (__ \ "userInfoId").write[Long]
-    )(unlift(UserInfo.unapply))
-
   def createUserInfo = Action(parse.json) { request =>
     println("create user info")
     val userInfoJson = request.body
@@ -90,6 +68,28 @@ trait UserInfoController extends Controller {
     }
   }
   */
+
+  implicit def userInfoReads: Reads[UserInfo] = (
+    (__ \ "name").read[String] and
+      (__ \ "passwd").read[String] and
+      (__ \ "realName").read[String] and
+      (__ \ "email").readNullable[String] and
+      (__ \ "tel").readNullable[String] and
+      (__ \ "roleId").read[Long] and
+      (__ \ "authKey").read[String] and
+      (__ \ "userInfoId").read[Long]
+    )(UserInfo.apply _)
+
+  implicit def userInfoWrites: Writes[UserInfo] = (
+    (__ \ "name").write[String] and
+      (__ \ "passwd").write[String] and
+      (__ \ "realName").write[String] and
+      (__ \ "email").writeNullable[String] and
+      (__ \ "tel").writeNullable[String] and
+      (__ \ "roleId").write[Long] and
+      (__ \ "authKey").write[String] and
+      (__ \ "userInfoId").write[Long]
+    )(unlift(UserInfo.unapply))
 
 }
 
