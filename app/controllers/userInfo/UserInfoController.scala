@@ -8,6 +8,7 @@ import play.api.libs.functional.syntax._
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 trait UserInfoController extends Controller {
   self: UserInfoServiceComponent =>
@@ -49,8 +50,9 @@ trait UserInfoController extends Controller {
   }
 
   def updateUserInfo(id: Long) = Action(parse.json) { request =>
+    println("########################################## start")
     val userInfoJson = request.body
-    val userInfo = userInfoJson.as[UserInfo]
+    val userInfo = userInfoJson.as[UserInfo] // JsValue.as[T] : 대소문자 구분..
     try {
       log.info(s"$userInfo")
       val result = userInfoService.updateUserInfo(id, userInfo)
@@ -63,7 +65,7 @@ trait UserInfoController extends Controller {
 
   def deleteUserInfo(id: Long) = Action { request =>
     try {
-      userInfoService.deleteUserInfo(id)
+      userInfoService.delete(id)
       Ok("delete user info id " + id)
     } catch {
       case e: IllegalArgumentException =>
@@ -71,6 +73,7 @@ trait UserInfoController extends Controller {
     }
   }
 
+  /*
   def findUserInfoById(id: Long) = Action {
     val userInfo = userInfoService.tryFindById(id)
     userInfo.onComplete {
@@ -84,6 +87,7 @@ trait UserInfoController extends Controller {
       case Failure(e) => println("fail")
     }
   }
+  */
 
 }
 

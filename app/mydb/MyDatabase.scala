@@ -27,6 +27,7 @@ object MyDatabase {
   }
 
   def close() = {
+    lemsdb.close()
   }
 
   def createSchema(): Unit = {

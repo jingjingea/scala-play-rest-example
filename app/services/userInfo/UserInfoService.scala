@@ -16,7 +16,7 @@ trait UserInfoServiceComponent {
 
         def updateUserInfo(id: Long, userInfo: UserInfo)
 
-        def tryFindById(id: Long): Option[UserInfo]
+        def tryFindById(id: Long)
 
         // def tryFindByEmail(email: String): Option[UserInfo]
         def delete(id: Long)
@@ -32,20 +32,13 @@ trait UserInfoServiceComponentImpl extends UserInfoServiceComponent {
             lemsdb.run(UserInfoTable += userInfo)
         }
 
-        override def updateUserInfo(id: Long, userInfo: UserInfo) = {
-          lemsdb.run(UserInfoTable.filter(_.userInfoId === id).result)
-          lemsdb.run(UserInfoTable.map(user => (user.tel, user.name)).update(userInfo.tel, userInfo.name))
-        }
+      override def updateUserInfo(id: Long, userInfo: UserInfo) = {
+        lemsdb.run(UserInfoTable.filter(_.userInfoId === id).update(userInfo))
+      }
 
         override def tryFindById(id: Long) = {
-          val test: Future[Option[UserInfo]] = lemsdb.run(UserInfoTable.filter(_.userInfoId === id).result.headOption)
-
-          val test1: Future[Seq[UserInfo]] = lemsdb.run(UserInfoTable.filter(_.userInfoId === id).result)
-          println(UserInfoTable.filter(_.userInfoId === id).result.statements)
-          // println(UserInfoTable.filter(_.userInfoId === id).map(m => ))
-          println(test)
-          println(test1)
-          test
+            val test: Future[Option[UserInfo]] = lemsdb.run(UserInfoTable.filter(_.userInfoId === id).result.headOption)
+            val test1: Future[Seq[UserInfo]] = lemsdb.run(UserInfoTable.filter(_.userInfoId === id).result)
         }
 
         override def delete(id: Long) = {
