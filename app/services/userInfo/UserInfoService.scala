@@ -18,7 +18,7 @@ trait UserInfoServiceComponent {
   // object for implementing service components
   trait UserInfoService {
     // must be implemented to class in child class or trait
-    def getList
+    def getList(limit: Option[Int], offset: Option[Int], sIdx: Option[String], sOrder: Option[String], name: Option[String], realName: Option[String], roleId: Option[Long]): Future[(Seq[(UserInfo, Role)], Int)]
 
     def createUserInfo(userInfo: UserInfo): Future[Int]
 
@@ -37,9 +37,40 @@ trait UserInfoServiceComponentImpl extends UserInfoServiceComponent {
   override val userInfoService = new UserInfoServiceImpl
 
   class UserInfoServiceImpl extends UserInfoService {
+    final val ORDER_ASC = "ASC"
+    final val ORDER_DESC = "DESC"
 
-    override def getList = {
-      val list: Future[Seq[UserInfo]] = lemsdb.run(UserInfoTable.result)
+    override def getList(limit: Option[Int], offset: Option[Int], sIdx: Option[String], sOrder: Option[String], name: Option[String], realName: Option[String], roleId: Option[Long]): Future[(Seq[(UserInfo, Role)], Int)] = {
+      var commonQuery = for {
+        user <- UserInfoTable
+        role <- RoleTable if user.roleId === role.roleId
+      } yield (user, role)
+
+
+      if (name.isDefined) commonQuery = commonQuery.filter { case (ctrl, _) => ctrl.name.toUpperCase like "%" + name.get.toUpperCase + "%" }
+      if (realName.isDefined) commonQuery = commonQuery.filter { case (ctrl, _) => ctrl.realName.toUpperCase like "%" + realName.get.toUpperCase + "%" }
+      if (roleId.isDefined) commonQuery = commonQuery.filter { case (ctrl, _) => ctrl.roleId === roleId }
+
+      var pagingQuery = commonQuery.sortBy { case (ctrl, _) =>
+        sIdx match {
+          case Some("name") => if (sOrder.getOrElse("").equals(ORDER_DESC)) ctrl.name.desc else ctrl.name.asc
+          case Some("realName") => if (sOrder.getOrElse("").equals(ORDER_DESC)) ctrl.realName.desc else ctrl.realName.asc
+          case Some("email") => if (sOrder.getOrElse("").equals(ORDER_DESC)) ctrl.email.desc else ctrl.email.asc
+          case Some("tel") => if (sOrder.getOrElse("").equals(ORDER_DESC)) ctrl.tel.desc else ctrl.tel.asc
+          case _ => ctrl.userInfoId.desc
+        }
+      }
+
+      if (offset.isDefined && limit.isDefined) {
+        pagingQuery = pagingQuery.drop(offset.get).take(limit.get)
+      }
+
+      val query = for {
+        rows: Seq[(UserInfo, Role)] <- pagingQuery.result
+        totalRows <- commonQuery.length.result
+      } yield (rows, totalRows)
+
+      lemsdb.run(query)
     }
 
     override def createUserInfo(userInfo: UserInfo): Future[Int] = {
