@@ -4,7 +4,10 @@ import domain.user.{UserInfo, UserInfoTable}
 import mydb.MyDatabase._
 import slick.driver.PostgresDriver.api._
 
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future}
+import scala.util.{Failure, Success}
 
 trait UserInfoServiceComponent {
   val userInfoService: UserInfoService
@@ -18,7 +21,7 @@ trait UserInfoServiceComponent {
 
     def updateUserInfo(id: Long, userInfo: UserInfo)
 
-    def tryFindById(id: Long)
+    def tryFindById(id: Long): Future[Option[UserInfo]]
 
     // def tryFindByEmail(email: String): Option[UserInfo]
     def delete(id: Long)
@@ -34,7 +37,7 @@ trait UserInfoServiceComponentImpl extends UserInfoServiceComponent {
     override def getList = {
       val list: Future[Seq[UserInfo]] = lemsdb.run(UserInfoTable.result)
     }
-    override def createUserInfo(userInfo: UserInfo) : Future[Int]= {
+    override def createUserInfo(userInfo: UserInfo): Future[Int] = {
       lemsdb.run(UserInfoTable += userInfo)
     }
 
@@ -42,9 +45,11 @@ trait UserInfoServiceComponentImpl extends UserInfoServiceComponent {
       lemsdb.run(UserInfoTable.filter(_.userInfoId === id).update(userInfo))
     }
 
-    override def tryFindById(id: Long) = {
-      val test: Future[Option[UserInfo]] = lemsdb.run(UserInfoTable.filter(_.userInfoId === id).result.headOption)
-      val test1: Future[Seq[UserInfo]] = lemsdb.run(UserInfoTable.filter(_.userInfoId === id).result)
+    override def tryFindById(id: Long): Future[Option[UserInfo]] = {
+      // val test: Future[Option[UserInfo]] = lemsdb.run(UserInfoTable.filter(_.userInfoId === id).result.headOption)
+      // val test1: Future[Seq[UserInfo]] = lemsdb.run(UserInfoTable.filter(_.userInfoId === id).result)
+      val result: Future[Option[UserInfo]] = lemsdb.run(UserInfoTable.filter(_.userInfoId === id).result.headOption)
+      return result
     }
 
     override def delete(id: Long) = {

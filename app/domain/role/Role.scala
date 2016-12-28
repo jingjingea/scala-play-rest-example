@@ -3,8 +3,7 @@ package domain.role
 import slick.driver.PostgresDriver.api._
 
 case class Role(name: String,
-               roleId: Long = 0L
-               )
+               roleId: Long = 0L)
 
 // ROLE
 class RoleTable(tag: Tag) extends Table[Role](tag, "role") {

@@ -1,6 +1,7 @@
 package controllers.role
 
 import play.api.libs.json._
+import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
 import services.role.RoleServiceComponent
 import domain.role.Role
@@ -10,17 +11,21 @@ trait RoleController extends Controller {
   self: RoleServiceComponent =>
 
   def createRole = Action(parse.json) { request =>
-    val roleJson = request.body
+    val roleJson: JsValue = request.body
+
+    val privIdList: Seq[Long] = (roleJson \ "privId").as[Seq[Long]]
     val role = roleJson.as[Role]
 
     try {
-      val result = roleService.createRole(role)
-      Ok(s"create role : $result")
+      val result = roleService.createRole(role, privIdList)
+      Ok(s"created role id : $result")
     } catch {
       case e: IllegalArgumentException =>
         BadRequest("Role Not Found")
     }
   }
+
+  // implicit val roleFormatter = Json.format[Role]
 
   implicit def roleReads: Reads[Role] = (
     (__ \ "name").read[String] and
@@ -31,6 +36,5 @@ trait RoleController extends Controller {
     (__ \ "name").write[String] and
       (__ \ "roleId").write[Long]
     )(unlift(Role.unapply))
-
 }
 

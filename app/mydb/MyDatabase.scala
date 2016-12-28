@@ -2,6 +2,8 @@ package mydb
 
 import com.typesafe.config.ConfigFactory
 import org.slf4j.{Logger, LoggerFactory}
+import slick.dbio.DBIOAction
+import slick.dbio.Effect.{Schema, Transactional}
 import slick.driver.PostgresDriver.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -35,6 +37,7 @@ object MyDatabase {
 
   def createSchema(): Unit = {
     log.info("## call createStatements.")
+    val asf: DBIOAction[Unit, NoStream, Schema] = MySchema.createTable
     val createTableFuture: Future[Unit] = lemsdb.run(MySchema.createTable.transactionally)
     createTableFuture.onSuccess { case s => log.info(s"DB Schema Create Success: $s") }
     createTableFuture.onFailure { case e => log.warn(s"DB Schema Create Failure: $e") }

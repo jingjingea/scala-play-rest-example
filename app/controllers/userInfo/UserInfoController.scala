@@ -7,7 +7,9 @@ import domain.user.UserInfo
 import play.api.libs.functional.syntax._
 import org.slf4j.{Logger, LoggerFactory}
 
-import scala.concurrent.Future
+import scala.concurrent.{Future, Await}
+import scala.concurrent.duration.Duration
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
 
 trait UserInfoController extends Controller {
@@ -30,9 +32,8 @@ trait UserInfoController extends Controller {
   }
 
   def updateUserInfo(id: Long) = Action(parse.json) { request =>
-    println("########################################## start")
     val userInfoJson = request.body
-    val userInfo = userInfoJson.as[UserInfo] // JsValue.as[T] : 대소문자 구분..
+    val userInfo = userInfoJson.as[UserInfo]
     try {
       log.info(s"$userInfo")
       val result = userInfoService.updateUserInfo(id, userInfo)
@@ -53,21 +54,11 @@ trait UserInfoController extends Controller {
     }
   }
 
-  /*
-  def findUserInfoById(id: Long) = Action {
-    val userInfo = userInfoService.tryFindById(id)
-    userInfo.onComplete {
-      case Success() => {
-        if (userInfo.isDefined) {
-          Ok(Json.toJson(userInfo))
-        } else {
-          NotFound
-        }
-      }
-      case Failure(e) => println("fail")
+  def findUserInfoById(id: Long) = Action.async {
+    userInfoService.tryFindById(id).map { m =>
+      Ok(Json.toJson(m))
     }
   }
-  */
 
   implicit def userInfoReads: Reads[UserInfo] = (
     (__ \ "name").read[String] and
