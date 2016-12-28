@@ -60,6 +60,13 @@ trait UserInfoController extends Controller {
     }
   }
 
+  implicit def anyReads: Reads[Any] = {
+    (__ \ "name").read[String] and
+      (__ \ "privId").read[Long] and
+      (__ \ "key").read[Long] and
+      (__ \ "name").read[String]
+  }
+
   implicit def userInfoReads: Reads[UserInfo] = (
     (__ \ "name").read[String] and
       (__ \ "passwd").read[String] and

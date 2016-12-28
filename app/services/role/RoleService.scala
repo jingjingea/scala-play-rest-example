@@ -27,7 +27,7 @@ trait RoleServiceComponentImpl extends RoleServiceComponent {
     override def createRole(role: Role, privIdList: Seq[Long]): Unit = {
       println(privIdList)
       val createRolePrivQueryList = for {
-        newRoleId: Long <- RoleTable returning RoleTable.map(_.roleId) += role
+        newRoleId <- RoleTable returning RoleTable.map(_.roleId) += role
         _ <- RolePrivLstTable ++= privIdList.map((privId: Long) => RolePrivLst(newRoleId, privId))
       } yield newRoleId
 
