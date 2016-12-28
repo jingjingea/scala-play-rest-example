@@ -60,7 +60,7 @@ trait UserInfoController extends Controller {
     }
   }
 
-  implicit def anyReads: Reads[Any] = {
+  implicit def anyReads: Reads[(Long, String)] = {
     (__ \ "name").read[String] and
       (__ \ "privId").read[Long] and
       (__ \ "key").read[Long] and

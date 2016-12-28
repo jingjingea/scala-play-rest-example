@@ -1,18 +1,16 @@
 package services.userInfo
 
-import domain.priv.PrivTable
+import domain.priv.{Priv, PrivTable}
 import domain.role.{Role, RoleTable}
 import domain.rolePrivLst.RolePrivLstTable
 import domain.user.{UserInfo, UserInfoTable}
 import mydb.MyDatabase._
+import slick.dbio.DBIOAction
 import slick.dbio.Effect.Read
 import slick.driver.PostgresDriver.api._
-import slick.profile.SqlAction
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Future}
-import scala.util.{Failure, Success}
+import scala.concurrent.Future
 
 trait UserInfoServiceComponent {
   val userInfoService: UserInfoService
@@ -22,7 +20,7 @@ trait UserInfoServiceComponent {
     // must be implemented to class in child class or trait
     def getList
 
-    def createUserInfo(userInfo: UserInfo) : Future[Int]
+    def createUserInfo(userInfo: UserInfo): Future[Int]
 
     def updateUserInfo(id: Long, userInfo: UserInfo)
 
@@ -43,6 +41,7 @@ trait UserInfoServiceComponentImpl extends UserInfoServiceComponent {
     override def getList = {
       val list: Future[Seq[UserInfo]] = lemsdb.run(UserInfoTable.result)
     }
+
     override def createUserInfo(userInfo: UserInfo): Future[Int] = {
       lemsdb.run(UserInfoTable += userInfo)
     }
@@ -51,20 +50,23 @@ trait UserInfoServiceComponentImpl extends UserInfoServiceComponent {
       lemsdb.run(UserInfoTable.filter(_.userInfoId === id).update(userInfo))
     }
 
-    override def tryFindById(id: Long): Future[Option[Any]] = {
+    override def tryFindById(id: Long): Future[(UserInfo, Role, Seq[Priv])] = {
       // val test: Future[Option[UserInfo]] = lemsdb.run(UserInfoTable.filter(_.userInfoId === id).result.headOption)
       // val test1: Future[Seq[UserInfo]] = lemsdb.run(UserInfoTable.filter(_.userInfoId === id).result)
-      val result = lemsdb.run(UserInfoTable.filter(_.userInfoId === id).result.headOption)
+      val result: Future[Option[UserInfo]] = lemsdb.run(UserInfoTable.filter(_.userInfoId === id).result.headOption)
 
-      val query = for {
-        user <- UserInfoTable if user.userInfoId === id
-        r <- RolePrivLstTable if user.roleId === r.roleId
-        //p <- PrivTable.filter(_.privId === r.privId)
-      } yield (user.*)
+      val query: DBIOAction[(UserInfo, Role, Seq[Priv]), NoStream, Read with Read] = for {
+        (user, role) <- (
+          for {user <- UserInfoTable if user.userInfoId === id
+               role <- RoleTable if user.roleId === role.roleId
+          } yield (user, role)).result.head
+        privRows <- (for {
+          rolePrivLstTable <- RolePrivLstTable.filter(_.roleId === user.roleId)
+          privTable <- PrivTable if privTable.privId === rolePrivLstTable.privId
+        } yield privTable).result
+      } yield (user, role, privRows)
 
-      val ret = lemsdb.run(query.result.headOption)
-
-      return ret
+      lemsdb.run(query)
     }
 
     override def delete(id: Long) = {
