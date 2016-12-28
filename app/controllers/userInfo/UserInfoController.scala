@@ -1,16 +1,13 @@
 package controllers.user
 
 import play.api.libs.json._
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{Action, AnyContent, Controller}
 import services.userInfo.UserInfoServiceComponent
 import domain.user.UserInfo
 import play.api.libs.functional.syntax._
 import org.slf4j.{Logger, LoggerFactory}
 
-import scala.concurrent.{Future, Await}
-import scala.concurrent.duration.Duration
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.util.{Failure, Success}
 
 trait UserInfoController extends Controller {
   self: UserInfoServiceComponent =>
@@ -37,10 +34,10 @@ trait UserInfoController extends Controller {
     try {
       log.info(s"$userInfo")
       val result = userInfoService.updateUserInfo(id, userInfo)
-        Ok("update user info record: " + result)
+      Ok("update user info record: " + result)
     } catch {
       case e: IllegalArgumentException =>
-      BadRequest("User Info Not Found")
+        BadRequest("User Info Not Found")
     }
   }
 
@@ -50,21 +47,37 @@ trait UserInfoController extends Controller {
       Ok("delete user info id " + id)
     } catch {
       case e: IllegalArgumentException =>
-      BadRequest("User Info Not Found")
+        BadRequest("User Info Not Found")
     }
   }
 
-  def findUserInfoById(id: Long) = Action.async {
-    userInfoService.tryFindById(id).map { m =>
-      Ok(Json.toJson(m))
+  def findUserInfoById(id: Long): Action[AnyContent] = Action.async {
+    userInfoService.tryFindById(id).map { m => {
+      val user = m._1
+      val role = m._2
+      val priv = m._3
+      Ok(Json.obj(
+        "name" -> user.name,
+        "passwd" -> user.passwd,
+        "realName" -> user.realName,
+        "email" -> user.email,
+        "tel" -> user.tel,
+        "roleId" -> user.roleId,
+        "roleName" -> role.name,
+        "authKey" -> user.authKey,
+        "userInfoId" -> user.userInfoId,
+        "priv" -> Json.arr(
+          priv.map { p =>
+            Json.obj(
+              "privId" -> p.privId,
+              "key" -> p.key,
+              "name" -> p.name
+            )
+          }
+        )
+      ))
     }
-  }
-
-  implicit def anyReads: Reads[(Long, String)] = {
-    (__ \ "name").read[String] and
-      (__ \ "privId").read[Long] and
-      (__ \ "key").read[Long] and
-      (__ \ "name").read[String]
+    }
   }
 
   implicit def userInfoReads: Reads[UserInfo] = (
@@ -76,7 +89,7 @@ trait UserInfoController extends Controller {
       (__ \ "roleId").read[Long] and
       (__ \ "authKey").read[String] and
       (__ \ "userInfoId").read[Long]
-    )(UserInfo.apply _)
+    ) (UserInfo.apply _)
 
   implicit def userInfoWrites: Writes[UserInfo] = (
     (__ \ "name").write[String] and
@@ -87,7 +100,7 @@ trait UserInfoController extends Controller {
       (__ \ "roleId").write[Long] and
       (__ \ "authKey").write[String] and
       (__ \ "userInfoId").write[Long]
-    )(unlift(UserInfo.unapply))
+    ) (unlift(UserInfo.unapply))
 
 }
 

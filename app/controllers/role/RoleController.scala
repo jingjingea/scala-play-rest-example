@@ -25,6 +25,31 @@ trait RoleController extends Controller {
     }
   }
 
+  def updateRole(id: Long) = Action(parse.json) { request =>
+    val roleJson = request.body
+
+    // val privIdList: Seq[Long] = (roleJson \ "privId").as[Seq[Long]] // ?
+    val role = roleJson.as[Role]
+
+    try {
+      val result = roleService.updateRole(id, role)
+      Ok(s"updated role : $result")
+    } catch {
+      case e: IllegalArgumentException =>
+        BadRequest("Role Not Found")
+    }
+  }
+  def deleteRole(id: Long) = Action { request =>
+    try {
+      println(s"################################################################## $id")
+      roleService.deleteRole(id)
+      Ok("delete role " + id)
+    } catch {
+      case e: IllegalArgumentException =>
+        BadRequest("Role Not Found")
+    }
+  }
+
   // implicit val roleFormatter = Json.format[Role]
 
   implicit def roleReads: Reads[Role] = (

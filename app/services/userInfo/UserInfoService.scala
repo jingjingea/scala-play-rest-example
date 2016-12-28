@@ -24,7 +24,7 @@ trait UserInfoServiceComponent {
 
     def updateUserInfo(id: Long, userInfo: UserInfo)
 
-    def tryFindById(id: Long): Future[Option[Any]]
+    def tryFindById(id: Long): Future[(UserInfo, Role, Seq[Priv])]
 
     // def tryFindByEmail(email: String): Option[UserInfo]
     def delete(id: Long)
@@ -77,14 +77,14 @@ trait UserInfoServiceComponentImpl extends UserInfoServiceComponent {
       lemsdb.run(UserInfoTable += userInfo)
     }
 
-    override def updateUserInfo(id: Long, userInfo: UserInfo) = {
+    override def updateUserInfo(id: Long, userInfo: UserInfo): Unit = {
       lemsdb.run(UserInfoTable.filter(_.userInfoId === id).update(userInfo))
     }
 
     override def tryFindById(id: Long): Future[(UserInfo, Role, Seq[Priv])] = {
       // val test: Future[Option[UserInfo]] = lemsdb.run(UserInfoTable.filter(_.userInfoId === id).result.headOption)
       // val test1: Future[Seq[UserInfo]] = lemsdb.run(UserInfoTable.filter(_.userInfoId === id).result)
-      val result: Future[Option[UserInfo]] = lemsdb.run(UserInfoTable.filter(_.userInfoId === id).result.headOption)
+      // val result: Future[Option[UserInfo]] = lemsdb.run(UserInfoTable.filter(_.userInfoId === id).result.headOption)
 
       val query: DBIOAction[(UserInfo, Role, Seq[Priv]), NoStream, Read with Read] = for {
         (user, role) <- (

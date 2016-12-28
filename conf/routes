@@ -16,7 +16,9 @@ PUT     /user_infos/:id             controllers.UserInfoApplication.updateUserIn
 DELETE  /user_infos/:id             controllers.UserInfoApplication.deleteUserInfo(id: Long)
 
 # Role
-POST    /role                       controllers.RoleApplication.createRole
+POST    /api/role                   controllers.RoleApplication.createRole
+PUT     /api/role/:id               controllers.RoleApplication.updateRole(id: Long)
+DELETE  /api/role/:id               controllers.RoleApplication.deleteRole(id: Long)
 
 # Priv
 POST    /priv                       controllers.PrivApplication.createPriv
