@@ -41,7 +41,7 @@ trait RoleController extends Controller {
   }
   def deleteRole(id: Long) = Action { request =>
     try {
-      println(s"################################################################## $id")
+      println(s"############################################################## $id")
       roleService.deleteRole(id)
       Ok("delete role " + id)
     } catch {

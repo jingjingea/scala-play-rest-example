@@ -15,7 +15,7 @@ class RolePrivLstTable(tag: Tag) extends Table[RolePrivLst](tag, "roleprivlst") 
 
   def ukPrivId = index("role_priv_lst_uk", (roleId, privId), unique = true)
 
-  def roleId_fk = foreignKey("roleid_fk", roleId, RoleTable)(_.roleId)
+  def roleId_fk = foreignKey("roleid_fk", roleId, RoleTable)(_.roleId, onDelete=ForeignKeyAction.Cascade)
   def privId_fk = foreignKey("privid_fk", privId, PrivTable)(_.privId)
 
   // Every table needs a * projection with the same type as the table's type parameter

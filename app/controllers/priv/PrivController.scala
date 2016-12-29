@@ -28,6 +28,21 @@ trait PrivController extends Controller {
     }
   }
 
+  def updatePriv(id: Long) = Action(parse.json) { request =>
+    val privJson = request.body
+    println(privJson)
+    val priv = privJson.as[Priv]
+    println(priv)
+
+    try {
+      val result = privService.updatePriv(id, priv)
+      Ok(s"updated priv $result")
+    } catch {
+      case e: IllegalArgumentException =>
+        BadRequest("Priv Not Found")
+    }
+  }
+
   implicit def privReads: Reads[Priv] = (
     (__ \ "name").read[String] and
       (__ \ "key").read[Long] and
