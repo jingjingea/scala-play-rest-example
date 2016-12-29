@@ -8,6 +8,7 @@ import mydb.MyDatabase._
 import slick.dbio.DBIOAction
 import slick.dbio.Effect.Read
 import slick.driver.PostgresDriver.api._
+import slick.lifted.QueryBase
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -29,6 +30,8 @@ trait UserInfoServiceComponent {
     // def tryFindByEmail(email: String): Option[UserInfo]
     def delete(id: Long)
 
+    def countName(name: String): Future[Int]
+
   }
 
 }
@@ -40,12 +43,17 @@ trait UserInfoServiceComponentImpl extends UserInfoServiceComponent {
     final val ORDER_ASC = "ASC"
     final val ORDER_DESC = "DESC"
 
+    override def countName(name: String): Future[Int] = {
+      val userInfoList = UserInfoTable.filter(userInfo => userInfo.name.toUpperCase like "%" + name.toUpperCase + "%")
+      val query = userInfoList.length.result
+      lemsdb.run(query)
+    }
+
     override def getList(limit: Option[Int], offset: Option[Int], sIdx: Option[String], sOrder: Option[String], name: Option[String], realName: Option[String], roleId: Option[Long]): Future[(Seq[(UserInfo, Role)], Int)] = {
       var commonQuery = for {
         user <- UserInfoTable
         role <- RoleTable if user.roleId === role.roleId
       } yield (user, role)
-
 
       if (name.isDefined) commonQuery = commonQuery.filter { case (ctrl, _) => ctrl.name.toUpperCase like "%" + name.get.toUpperCase + "%" }
       if (realName.isDefined) commonQuery = commonQuery.filter { case (ctrl, _) => ctrl.realName.toUpperCase like "%" + realName.get.toUpperCase + "%" }

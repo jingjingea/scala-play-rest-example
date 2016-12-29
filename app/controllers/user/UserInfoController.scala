@@ -1,5 +1,6 @@
 package controllers.user
 
+import domain.role.Role
 import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, Controller}
 import services.userInfo.UserInfoServiceComponent
@@ -14,17 +15,50 @@ trait UserInfoController extends Controller {
 
   implicit val log: Logger = LoggerFactory.getLogger(getClass)
 
-  def createUserInfo = Action(parse.json) { request =>
-    println("create user info")
+  def getList = Action.async { request =>
+    val limit: Option[Int] = request.getQueryString("limit").map(l => l.toInt)
+    val offset: Option[Int] = request.getQueryString("offset").map(o => o.toInt)
+    val sIdx: Option[String] = request.getQueryString("sIdx")
+    val sOrder: Option[String] = request.getQueryString("sOrder")
+    val name: Option[String] = request.getQueryString("name")
+    val realName: Option[String] = request.getQueryString("realName")
+    val roleId = request.getQueryString("roleId").map(r => r.toLong)
+
+    userInfoService.getList(limit, offset, sIdx, sOrder, name, realName, roleId).map { m => {
+      val userList: Seq[(UserInfo, Role)] = m._1
+      val totalRows = m._2
+
+      Ok(Json.obj(
+        "rows" -> Json.arr(userList.map(userInfo => {
+          val user = userInfo._1
+          val role = userInfo._2
+          Json.obj(
+            "name" -> user.name,
+            "passwd" -> user.passwd,
+            "realName" -> user.realName,
+            "tel" -> user.tel,
+            "authKey" -> user.authKey,
+            "roleName" -> role.name,
+            "roleId" -> role.roleId,
+            "userId" -> user.userInfoId
+          )
+        }
+        )
+        ),
+        "totalPages" -> getTotalPages(totalRows, limit),
+        "totalRecords" -> totalRows
+      ))
+    }
+    }
+  }
+
+
+  def createUserInfo = Action.async(parse.json) { request =>
     val userInfoJson = request.body
     val userInfo = userInfoJson.as[UserInfo]
-    try {
-      log.info(s"$userInfo")
-      val result = userInfoService.createUserInfo(userInfo)
-      Ok("create user info record" + result)
-    } catch {
-      case e: IllegalArgumentException =>
-        BadRequest("User Info Not Found")
+
+    userInfoService.createUserInfo(userInfo).map { rows =>
+      Ok(Json.obj("rows" -> rows))
     }
   }
 
@@ -77,6 +111,24 @@ trait UserInfoController extends Controller {
         )
       ))
     }
+    }
+  }
+
+  def isNameExist(name: String) = Action.async { request =>
+    userInfoService.countName(name).map { n =>
+      if (n > 0) Ok(Json.obj("result" -> true))
+      else Ok(Json.obj("result" -> false))
+    }
+  }
+
+  def getTotalPages(total: Int, limit: Option[Int]) = {
+    val lim = limit match {
+      case Some(v) => v
+      case None => total
+    }
+    (total % lim) match {
+      case 0 => total / lim
+      case _ => (total / lim) + 1
     }
   }
 

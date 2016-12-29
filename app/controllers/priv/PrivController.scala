@@ -43,17 +43,27 @@ trait PrivController extends Controller {
     }
   }
 
+  def deletePriv(id: Long) = Action { request =>
+    try {
+      privService.deletePriv(id)
+      Ok("delete priv id " + id)
+    } catch {
+      case e: IllegalArgumentException =>
+        BadRequest("Priv Not Found")
+    }
+  }
+
   implicit def privReads: Reads[Priv] = (
     (__ \ "name").read[String] and
       (__ \ "key").read[Long] and
       (__ \ "privId").read[Long]
-    )(Priv.apply _)
+    ) (Priv.apply _)
 
   implicit def privWrites: Writes[Priv] = (
     (__ \ "name").write[String] and
       (__ \ "key").write[Long] and
       (__ \ "privId").write[Long]
-    )(unlift(Priv.unapply))
+    ) (unlift(Priv.unapply))
 
 
 }

@@ -15,7 +15,10 @@ trait PrivServiceComponent {
 
   trait PrivService {
     def createPriv(priv: Priv): Future[Int]
+
     def updatePriv(id: Long, priv: Priv)
+
+    def deletePriv(id: Long)
   }
 
 }
@@ -32,5 +35,10 @@ trait PrivServiceComponentImpl extends PrivServiceComponent {
       lemsdb.run(PrivTable.filter(_.privId === id).update(priv))
     }
 
+    override def deletePriv(id: Long) = {
+      lemsdb.run(PrivTable.filter(_.privId === id).delete)
+    }
+
   }
+
 }
