@@ -8,12 +8,37 @@ import play.api.libs.functional.syntax._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.slf4j.{Logger, LoggerFactory}
-
-import scala.concurrent.Future
+import services.CommonMethods
 
 trait PrivController extends Controller {
   self: PrivServiceComponent =>
   implicit val log: Logger = LoggerFactory.getLogger(getClass)
+
+  def getPrivList = Action.async { request =>
+    val limit: Option[Int] = request.getQueryString("limit").map(l => l.toInt)
+    val offset: Option[Int] = request.getQueryString("offset").map(o => o.toInt)
+    val sIdx: Option[String] = request.getQueryString("sIdx")
+    val sOrder: Option[String] = request.getQueryString("sOrder")
+    val name: Option[String] = request.getQueryString("name")
+
+    privService.getList(limit, offset, sIdx, sOrder, name).map { m =>
+      val privList = m._1
+      val totalRows = m._2
+      Ok(Json.obj(
+        "rows" -> Json.arr(privList.map { priv => {
+          Json.obj(
+            "privId" -> priv.privId,
+            "key" -> priv.key,
+            "name" -> priv.name
+          )
+        }
+        }),
+        "totalPage" -> CommonMethods.getTotalPages(totalRows, limit),
+        "totalRecords" -> totalRows
+      )
+      )
+    }
+  }
 
   def createPriv = Action(parse.json) { request =>
     val privJson = request.body

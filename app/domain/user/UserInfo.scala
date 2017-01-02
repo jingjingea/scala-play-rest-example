@@ -24,7 +24,7 @@ class UserInfoTable(tag: Tag) extends Table[UserInfo](tag, "userinfo") {
   def authKey = column[String]("authkey")
   def userInfoId = column[Long]("userinfoid", O.PrimaryKey, O.AutoInc)
 
-  def roleId_fk = foreignKey("roleid_fk", roleId, RoleTable)(_.roleId)
+  def roleId_fk = foreignKey("roleid_fk", roleId, RoleTable)(_.roleId, onDelete=ForeignKeyAction.Cascade)
 
   def ukName = index("userinfo_name_uk", name, unique = true)
 

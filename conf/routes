@@ -9,7 +9,7 @@ GET           /db/create/schema        controllers.UserInfoApplication.createSch
 GET           /db/drop/schema          controllers.UserInfoApplication.dropSchema
 
 # UserInfo
-GET           /api/user                controllers.UserInfoApplication.getList
+GET           /api/user                controllers.UserInfoApplication.getUserList
 POST          /api/user                controllers.UserInfoApplication.createUserInfo
 GET           /api/user/:id            controllers.UserInfoApplication.findUserInfoById(id: Long)
 PUT           /api/user/:id            controllers.UserInfoApplication.updateUserInfo(id: Long)
@@ -17,17 +17,20 @@ DELETE        /api/user/:id            controllers.UserInfoApplication.deleteUse
 GET           /api/user/isExist/:name  controllers.UserInfoApplication.isNameExist(name: String)
 
 # Role
+GET           /api/role                controllers.RoleApplication.getRoleList
 POST          /api/role                controllers.RoleApplication.createRole
 PUT           /api/role/:id            controllers.RoleApplication.updateRole(id: Long)
 DELETE        /api/role/:id            controllers.RoleApplication.deleteRole(id: Long)
 
 # Priv
+GET           /api/priv                controllers.PrivApplication.getPrivList
 POST          /api/priv                controllers.PrivApplication.createPriv
 PUT           /api/priv/:id            controllers.PrivApplication.updatePriv(id: Long)
 DELETE        /api/priv/:id            controllers.PrivApplication.deletePriv(id: Long)
 
-GET           /test/:num               controllers.UserInfoApplication.test(num: Int)
-GET           /test1                   controllers.UserInfoApplication.test1()
+
+# GET           /test/:num               controllers.UserInfoApplication.test(num: Int)
+# GET           /test1                   controllers.UserInfoApplication.test1()
 
 # Map static resources from the /public folder to the /assets URL path
 GET           /assets/*file            controllers.Assets.at(path="/public", file)

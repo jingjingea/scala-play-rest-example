@@ -8,7 +8,6 @@ import mydb.MyDatabase._
 import slick.dbio.DBIOAction
 import slick.dbio.Effect.Read
 import slick.driver.PostgresDriver.api._
-import slick.lifted.QueryBase
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -21,7 +20,7 @@ trait UserInfoServiceComponent {
     // must be implemented to class in child class or trait
     def getList(limit: Option[Int], offset: Option[Int], sIdx: Option[String], sOrder: Option[String], name: Option[String], realName: Option[String], roleId: Option[Long]): Future[(Seq[(UserInfo, Role)], Int)]
 
-    def createUserInfo(userInfo: UserInfo): Future[Int]
+    def createUserInfo(userInfo: UserInfo): Future[Long]
 
     def updateUserInfo(id: Long, userInfo: UserInfo)
 
@@ -31,7 +30,6 @@ trait UserInfoServiceComponent {
     def delete(id: Long)
 
     def countName(name: String): Future[Int]
-
   }
 
 }
@@ -42,12 +40,6 @@ trait UserInfoServiceComponentImpl extends UserInfoServiceComponent {
   class UserInfoServiceImpl extends UserInfoService {
     final val ORDER_ASC = "ASC"
     final val ORDER_DESC = "DESC"
-
-    override def countName(name: String): Future[Int] = {
-      val userInfoList = UserInfoTable.filter(userInfo => userInfo.name.toUpperCase like "%" + name.toUpperCase + "%")
-      val query = userInfoList.length.result
-      lemsdb.run(query)
-    }
 
     override def getList(limit: Option[Int], offset: Option[Int], sIdx: Option[String], sOrder: Option[String], name: Option[String], realName: Option[String], roleId: Option[Long]): Future[(Seq[(UserInfo, Role)], Int)] = {
       var commonQuery = for {
@@ -81,8 +73,11 @@ trait UserInfoServiceComponentImpl extends UserInfoServiceComponent {
       lemsdb.run(query)
     }
 
-    override def createUserInfo(userInfo: UserInfo): Future[Int] = {
-      lemsdb.run(UserInfoTable += userInfo)
+    override def createUserInfo(userInfo: UserInfo): Future[Long] = {
+      val query = for {
+        id <- UserInfoTable returning UserInfoTable.map(_.userInfoId) += userInfo
+      } yield id
+      lemsdb.run(query)
     }
 
     override def updateUserInfo(id: Long, userInfo: UserInfo): Unit = {
@@ -92,7 +87,6 @@ trait UserInfoServiceComponentImpl extends UserInfoServiceComponent {
     override def tryFindById(id: Long): Future[(UserInfo, Role, Seq[Priv])] = {
       // val test: Future[Option[UserInfo]] = lemsdb.run(UserInfoTable.filter(_.userInfoId === id).result.headOption)
       // val test1: Future[Seq[UserInfo]] = lemsdb.run(UserInfoTable.filter(_.userInfoId === id).result)
-      // val result: Future[Option[UserInfo]] = lemsdb.run(UserInfoTable.filter(_.userInfoId === id).result.headOption)
 
       val query: DBIOAction[(UserInfo, Role, Seq[Priv]), NoStream, Read with Read] = for {
         (user, role) <- (
@@ -111,6 +105,13 @@ trait UserInfoServiceComponentImpl extends UserInfoServiceComponent {
     override def delete(id: Long) = {
       lemsdb.run(UserInfoTable.filter(_.userInfoId === id).delete)
     }
+
+    override def countName(name: String): Future[Int] = {
+      val userInfoList = UserInfoTable.filter(userInfo => userInfo.name.toUpperCase like "%" + name.toUpperCase + "%")
+      val query = userInfoList.length.result
+      lemsdb.run(query)
+    }
+
   }
 
 }

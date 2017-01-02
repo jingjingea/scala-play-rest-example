@@ -7,6 +7,7 @@ import services.userInfo.UserInfoServiceComponent
 import domain.user.UserInfo
 import play.api.libs.functional.syntax._
 import org.slf4j.{Logger, LoggerFactory}
+import services.CommonMethods
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -15,7 +16,7 @@ trait UserInfoController extends Controller {
 
   implicit val log: Logger = LoggerFactory.getLogger(getClass)
 
-  def getList = Action.async { request =>
+  def getUserList = Action.async { request =>
     val limit: Option[Int] = request.getQueryString("limit").map(l => l.toInt)
     val offset: Option[Int] = request.getQueryString("offset").map(o => o.toInt)
     val sIdx: Option[String] = request.getQueryString("sIdx")
@@ -45,20 +46,19 @@ trait UserInfoController extends Controller {
         }
         )
         ),
-        "totalPages" -> getTotalPages(totalRows, limit),
+        "totalPages" -> CommonMethods.getTotalPages(totalRows, limit),
         "totalRecords" -> totalRows
       ))
     }
     }
   }
 
-
   def createUserInfo = Action.async(parse.json) { request =>
     val userInfoJson = request.body
     val userInfo = userInfoJson.as[UserInfo]
 
-    userInfoService.createUserInfo(userInfo).map { rows =>
-      Ok(Json.obj("rows" -> rows))
+    userInfoService.createUserInfo(userInfo).map { id =>
+      Ok(Json.obj("userId" -> id))
     }
   }
 
@@ -118,17 +118,6 @@ trait UserInfoController extends Controller {
     userInfoService.countName(name).map { n =>
       if (n > 0) Ok(Json.obj("result" -> true))
       else Ok(Json.obj("result" -> false))
-    }
-  }
-
-  def getTotalPages(total: Int, limit: Option[Int]) = {
-    val lim = limit match {
-      case Some(v) => v
-      case None => total
-    }
-    (total % lim) match {
-      case 0 => total / lim
-      case _ => (total / lim) + 1
     }
   }
 
