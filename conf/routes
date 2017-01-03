@@ -32,5 +32,7 @@ DELETE        /api/priv/:id            controllers.PrivApplication.deletePriv(id
 # GET           /test/:num               controllers.UserInfoApplication.test(num: Int)
 # GET           /test1                   controllers.UserInfoApplication.test1()
 
+GET           /test                    controllers.RoleApplication.test
+
 # Map static resources from the /public folder to the /assets URL path
 GET           /assets/*file            controllers.Assets.at(path="/public", file)

@@ -8,7 +8,9 @@ import play.api.mvc.{Action, Controller}
 import services.role.RoleServiceComponent
 import domain.role.Role
 import play.api.libs.functional.syntax._
+
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 trait RoleController extends Controller {
   self: RoleServiceComponent =>
@@ -22,9 +24,9 @@ trait RoleController extends Controller {
     val privId = request.getQueryString("privId").map(l => l.toLong)
 
     roleService.getList(limit, offset, sIdx, sOrder, name, privId).map { m =>
-      val roleList: Seq[Role] = m._1.map(_._1)
-      val privList: Seq[Priv] = m._1.map(_._2)
-      val totalRows = m._2
+      val roleList: Seq[Role] = m._1
+      val privList: Seq[(Long, Priv)] = m._2
+      val totalRows: Int = m._3
 
       Ok(Json.obj(
         "rows" ->
@@ -32,16 +34,14 @@ trait RoleController extends Controller {
             Json.obj(
               "name" -> role.name,
               "roleId" -> role.roleId,
-              "priv" -> Json.arr(
-                privList.map(priv => {
+              "priv" -> privList.filter(_._1 == role.roleId).map {
+                case (_, priv) =>
                   Json.obj(
-                    "key" -> priv.key,
                     "name" -> priv.name,
+                    "key" -> priv.key,
                     "privId" -> priv.privId
                   )
-                }
-                )
-              )
+              }
             )
           }
           ),
@@ -49,7 +49,6 @@ trait RoleController extends Controller {
         "totalRecordes" -> totalRows
       ))
     }
-
   }
 
   def createRole = Action(parse.json) { request =>
@@ -92,6 +91,15 @@ trait RoleController extends Controller {
     }
   }
 
+  def test = Action { request =>
+    try {
+      roleService.test
+      Ok("ok")
+    } catch {
+      case e: IllegalArgumentException =>
+        BadRequest("Role Not Found")
+    }
+  }
 
   // implicit val roleFormatter = Json.format[Role]
 

@@ -30,7 +30,7 @@ trait UserInfoController extends Controller {
       val totalRows = m._2
 
       Ok(Json.obj(
-        "rows" -> Json.arr(userList.map(userInfo => {
+        "rows" -> userList.map(userInfo => {
           val user = userInfo._1
           val role = userInfo._2
           Json.obj(
@@ -44,7 +44,6 @@ trait UserInfoController extends Controller {
             "userId" -> user.userInfoId
           )
         }
-        )
         ),
         "totalPages" -> CommonMethods.getTotalPages(totalRows, limit),
         "totalRecords" -> totalRows
@@ -100,15 +99,14 @@ trait UserInfoController extends Controller {
         "roleName" -> role.name,
         "authKey" -> user.authKey,
         "userInfoId" -> user.userInfoId,
-        "priv" -> Json.arr(
-          priv.map { p =>
-            Json.obj(
-              "privId" -> p.privId,
-              "key" -> p.key,
-              "name" -> p.name
-            )
-          }
-        )
+        "priv" -> priv.map { p =>
+          Json.obj(
+            "privId" -> p.privId,
+            "key" -> p.key,
+            "name" -> p.name
+          )
+        }
+
       ))
     }
     }
