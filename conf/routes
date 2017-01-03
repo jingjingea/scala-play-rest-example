@@ -28,7 +28,7 @@ POST          /api/priv                controllers.PrivApplication.createPriv
 PUT           /api/priv/:id            controllers.PrivApplication.updatePriv(id: Long)
 DELETE        /api/priv/:id            controllers.PrivApplication.deletePriv(id: Long)
 
-
+GET             /ws                     controllers.WebSocketApplication.socket
 # GET           /test/:num               controllers.UserInfoApplication.test(num: Int)
 # GET           /test1                   controllers.UserInfoApplication.test1()
 
