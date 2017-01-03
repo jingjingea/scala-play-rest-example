@@ -23,8 +23,6 @@ trait RoleServiceComponent {
     def updateRole(id: Long, role: Role)
 
     def deleteRole(id: Long)
-
-    def test
   }
 
 }
@@ -36,12 +34,6 @@ trait RoleServiceComponentImpl extends RoleServiceComponent {
     final val ORDER_ASC = "ASC"
     final val ORDER_DESC = "DESC"
 
-    override def test = {
-      val ff = for {
-        (role, rolePrivList) <- RoleTable joinLeft RolePrivLstTable on (_.roleId === _.roleId)
-      } yield (role, rolePrivList)
-      lemsdb.run(ff.result)
-    }
 /*
     private def selectByCondition(limit: Option[Int], offset: Option[Int], sIdx: Option[String], sOrder: Option[String], name: Option[String], selectedPrivIdArr : Option[Seq[Long]]) = {
       var commonQuery = RoleTable.to[Seq]
@@ -112,8 +104,6 @@ trait RoleServiceComponentImpl extends RoleServiceComponent {
       if (limit.isDefined && offset.isDefined) {
         pagingQuery = pagingQuery.drop(offset.get).take(limit.get)
       }
-
-      val wildcardQuery = RoleTable.to[Seq].filter { case role => role.name.toUpperCase like }
 
       val query = for {
         rows <- pagingQuery.result

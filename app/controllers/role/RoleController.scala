@@ -91,16 +91,6 @@ trait RoleController extends Controller {
     }
   }
 
-  def test = Action { request =>
-    try {
-      roleService.test
-      Ok("ok")
-    } catch {
-      case e: IllegalArgumentException =>
-        BadRequest("Role Not Found")
-    }
-  }
-
   // implicit val roleFormatter = Json.format[Role]
 
   implicit def roleReads: Reads[Role] = (
