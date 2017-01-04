@@ -13,14 +13,17 @@ final case class LemsEventEnvelope(topic: String, payload: Any)
 
 class LemsEventBus extends EventBus with LookupClassification {
   type Event = LemsEventEnvelope
+  // bus에서 보내질 모든 이벤트의 타입
   type Classifier = String
-  type Subscriber = ActorRef
+  // 보낼 이벤트들의 subscriber를 선택하는데 사용되는 classifier를 정의?? 식별을 위한 String정도?
+  type Subscriber = ActorRef // event bus에서 허용할 subscribers의 타입
 
   // 인입된 이벤트에서 classifier를 추출한다.
   override def classify(event: Event): Classifier = event.topic
 
   // 이벤트가 발생할 때마다 해당 classifier에 가입된 모든 subscriber에 대해서 호출된다.
   override def publish(event: Event, subscriber: Subscriber): Unit = {
+    println("############# event payload : " + event.payload)
     subscriber ! event.payload
   }
 
@@ -29,6 +32,7 @@ class LemsEventBus extends EventBus with LookupClassification {
 
   // 내부적으로 사용되는 인덱스 구조체의 초기 크기를 결정한다. (예상되는 classifier의 갯수)
   override def mapSize(): Int = 128
+
 }
 
 object LemsEventBus {

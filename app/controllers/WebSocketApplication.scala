@@ -3,18 +3,16 @@ package controllers
 import javax.inject._
 
 import actor.TestActor
-import actor.event.{TestMessage, TopicActor, TopicName}
+import actor.event.{EventBusActor, TestMessage, TopicActor, TopicName}
+import actor.event.EventBusActor._
 import akka.actor._
 import akka.actor.ActorSystem
 import akka.stream.Materializer
-import domain.ws.{InEvent, OutEvent}
 import play.api.libs.json._
 import play.api.libs.streams.ActorFlow
 import play.api.mvc.WebSocket.MessageFlowTransformer
 import play.api.mvc._
 import domain.ws.{InEvent, OutEvent}
-import play.api.libs.functional.syntax._
-import play.api.mvc.WebSocket.FrameFormatter
 
 import scala.concurrent.Future
 
@@ -26,12 +24,10 @@ case class WSCommand(cmd: Int, cmd2: Int)
 
 @Singleton
 class WebSocketApplication @Inject()(implicit system: ActorSystem, materializer: Materializer) extends Controller {
-  implicit val messageFlowTransformer: MessageFlowTransformer[InEvent, OutEvent] = MessageFlowTransformer.jsonMessageFlowTransformer[InEvent, OutEvent]
+  implicit val inEventFormat = Json.format[InEvent]
+  implicit val outEventFormat = Json.format[OutEvent]
 
-  implicit val inEventReads: Reads[InEvent] = Json.reads[InEvent]
-  implicit val inEventWrites: Writes[InEvent] = Json.writes[InEvent]
-  implicit val outEventReads = Json.reads[OutEvent]
-  implicit val outEventWrites = Json.writes[OutEvent]
+  implicit val messageFlowTransformer: MessageFlowTransformer[InEvent, OutEvent] = MessageFlowTransformer.jsonMessageFlowTransformer[InEvent, OutEvent]
 
   def socket = WebSocket.acceptOrResult[InEvent, OutEvent] { request =>
     Future.successful(Right(ActorFlow.actorRef(WSActor.props)))
@@ -39,25 +35,47 @@ class WebSocketApplication @Inject()(implicit system: ActorSystem, materializer:
 }
 
 class WSActor(out: ActorRef) extends TopicActor {
+  println("before topics")
   override val topics = Seq(TopicName.testTopic)
+  topics.map(x => {println("##### check topics"); println("### " + x)})
 
-  val testActor = context.system.actorSelection("/user/MainActor/" + TestActor.name)
+  val testActor = context.system.actorSelection(COMMON_ACTOR_PATH + TestActor.name)
+  // override val busActor = context.system.actorSelection(COMMON_ACTOR_PATH + EventBusActor.name)
+
+  implicit val inEventFormat = Json.format[InEvent]
 
   override def receive: Receive = {
     case value: InEvent =>
-      println("########")
-      out ! Json.obj("message" -> JsString("out message : " + value))
-    /*
-    case "test" =>
-      out ! "test_out_1"
-    case "broad" =>
+      val json = Json.toJson(value)
+      (json \ "command").as[String] match {
+        case "SUB" => subscribeTopic((json \ "topic").as[String])
+        case "UNSUB" => unsubscribeTopic((json \ "topic").as[String])
+        case "SEND" =>
+          val topic = (json \ "topic").as[String]
+          val message = (json \ "message").as[String]
+          sendMessage(TestMessage(TopicName.getTopicName(topic), message))
+      }
       testActor ! "test"
     case TestMessage(topic, message) =>
-      out ! message
+      out ! OutEvent(message)
+    case str: String =>
+      out ! str
     case _ =>
-      out ! "test_out_2"
-      */
+      out ! OutEvent("Unknown")
   }
+
+  def subscribeTopic(topic: String) = {
+    busActor ! Subscribe(topic)
+  }
+
+  def unsubscribeTopic(topic: String) = {
+    busActor ! Unsubscribe(topic)
+  }
+
+  def sendMessage(tm: TestMessage) = {
+    busActor ! tm
+  }
+
 }
 
 object WSActor {

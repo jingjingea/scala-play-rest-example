@@ -25,8 +25,9 @@ abstract class TopicActor extends Actor{
   val topics:Seq[TopicName] = Seq.empty
 
   override def preStart(): Unit = {
+    println("pre start")
     super.preStart()
-    topics.foreach(subscribe)
+    // topics.foreach(subscribe)
   }
 
   override def postStop(): Unit = {

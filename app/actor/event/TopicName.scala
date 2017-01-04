@@ -7,4 +7,5 @@ object TopicName extends Enumeration {
   type TopicName = Value
 
   val testTopic = Value("lems.test")
+  def getTopicName(topic: String) = Value(topic)
 }
