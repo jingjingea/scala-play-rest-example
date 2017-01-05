@@ -1,5 +1,6 @@
 
 import actor.MainActor
+import controllers.ScheduleApplication
 import org.slf4j.{Logger, LoggerFactory}
 import play.api._
 

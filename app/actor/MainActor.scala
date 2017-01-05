@@ -1,7 +1,10 @@
 package actor
 
+import java.util.Date
+
 import actor.event._
 import akka.actor.{Actor, Props}
+import controllers.ScheduleApplication
 import org.slf4j.{Logger, LoggerFactory}
 
 /**
@@ -20,6 +23,9 @@ class MainActor extends Actor {
     log.info("Initialized....")
     val eventBusActor = context.actorOf(EventBusActor.props, name = EventBusActor.name)
     val testActor = context.actorOf(TestActor.props, name = TestActor.name)
+    val temp: Date = ScheduleApplication.scheduler.startScheduler
+    log.info(s"#%#%#%#%#%#%#%#%#%#%#%#%#%#%##%#%#%#%#%#%#%#%#%#%#%#%")
+    log.info(s"$temp")
 
     log.info(
       s"""

@@ -58,8 +58,6 @@ class WSActor(out: ActorRef) extends TopicActor {
       testActor ! "test"
     case TestMessage(topic, message) =>
       out ! OutEvent(message)
-    case str: String =>
-      out ! str
     case _ =>
       out ! OutEvent("Unknown")
   }
