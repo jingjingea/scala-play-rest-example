@@ -8,7 +8,7 @@ import akka.actor._
 class ScheduleActor extends Actor {
   override def receive = {
     case "msg" =>
-      println("print msg per 5 seconds")
+      println("print msg per 30 seconds")
   }
 
 }

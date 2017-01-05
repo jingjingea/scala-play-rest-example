@@ -4,6 +4,12 @@ import actor.event.EventBusActor.{Subscribe, Unsubscribe}
 import actor.event.TopicName.TopicName
 import akka.actor.ActorRef
 import akka.event.{EventBus, LookupClassification}
+import domain.user.{UserInfo, UserInfoTable}
+import mydb.MyDatabase._
+import slick.driver.PostgresDriver.api._
+import scala.concurrent.duration.Duration
+
+import scala.concurrent.{Await, Future}
 
 /**
   * 2016. 8. 25. - Created by OutOfBedlam@github
@@ -24,7 +30,9 @@ class LemsEventBus extends EventBus with LookupClassification {
   // 이벤트가 발생할 때마다 해당 classifier에 가입된 모든 subscriber에 대해서 호출된다.
   override def publish(event: Event, subscriber: Subscriber): Unit = {
     println("############# event payload : " + event.payload)
-    subscriber ! event.payload
+    val query = UserInfoTable.take(1).result.head
+    val returnValue: Future[UserInfo] = lemsdb.run(query)
+    subscriber ! Await.result(returnValue, Duration(1000, "millis"))
   }
 
   // 전체 subscriber에 대한 순서를 정해야한다.

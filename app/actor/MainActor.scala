@@ -4,8 +4,10 @@ import java.util.Date
 
 import actor.event._
 import akka.actor.{Actor, Props}
+import com.typesafe.akka.extension.quartz.QuartzSchedulerExtension
 import controllers.ScheduleApplication
 import org.slf4j.{Logger, LoggerFactory}
+
 
 /**
   * Created by hana on 2017-01-03.
@@ -23,9 +25,7 @@ class MainActor extends Actor {
     log.info("Initialized....")
     val eventBusActor = context.actorOf(EventBusActor.props, name = EventBusActor.name)
     val testActor = context.actorOf(TestActor.props, name = TestActor.name)
-    val temp: Date = ScheduleApplication.scheduler.startScheduler
-    log.info(s"#%#%#%#%#%#%#%#%#%#%#%#%#%#%##%#%#%#%#%#%#%#%#%#%#%#%")
-    log.info(s"$temp")
+    val cronActor = context.actorOf(CronActor.props, name = CronActor.name)
 
     log.info(
       s"""
@@ -33,7 +33,11 @@ class MainActor extends Actor {
          | -------------------------------------------------
          |    ${EventBusActor.name}=${eventBusActor.path}
          |    ${TestActor.name}=${testActor.path}
+         |    ${CronActor.name}=${cronActor.path}
          """.stripMargin)
+
+    // val startTime: Date = ScheduleApplication.schedulerApplication.startScheduler
+    // log.info(s"### Start Time : $startTime")
   }
 
   private def onTermiate(): Unit = {

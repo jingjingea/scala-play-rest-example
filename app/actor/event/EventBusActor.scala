@@ -5,7 +5,9 @@ import actor.event.LemsEventBus._
 import akka.actor.{Actor, Props, Terminated}
 import controllers.WSActor
 import controllers.WSActor._
+import domain.ws.InEvent
 import org.slf4j.{Logger, LoggerFactory}
+import play.api.libs.json.Json
 
 /**
   * 2016. 8. 25. - Created by OutOfBedlam@github
@@ -16,8 +18,7 @@ class EventBusActor extends Actor {
 
   override def receive: Receive = {
     case Subscribe(topic) =>
-      println("when? $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-      println("subscribe : " + topic)
+      println("when? $$$$$$$$$$$$$$")
       val remoteActor = sender() // sender(): ActorRef, 이 Actor로 메세지 보낸 마지막 Actor
       println(sender())
 
@@ -43,6 +44,14 @@ class EventBusActor extends Actor {
         log.debug(s"TopicMessage: topic=${tm.topic}")
       lemsbus.publish(LemsEventEnvelope(tm.topic.toString, tm)) // Event의 type LemsEventEnvelope
       log.info(lemsbus.classify(LemsEventEnvelope(tm.topic.toString, tm)))
+
+    case croning: InEvent =>
+      implicit val inEventFormat = Json.format[InEvent]
+      val cronJson = Json.toJson(croning)
+      val topic = (cronJson \ "topic").as[String]
+      val message = (cronJson \ "message").as[String]
+      log.info(s"###########################################################################")
+      lemsbus.publish(LemsEventEnvelope(topic, message))
   }
 }
 

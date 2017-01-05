@@ -8,6 +8,7 @@ import actor.event.EventBusActor._
 import akka.actor._
 import akka.actor.ActorSystem
 import akka.stream.Materializer
+import domain.user.UserInfo
 import play.api.libs.json._
 import play.api.libs.streams.ActorFlow
 import play.api.mvc.WebSocket.MessageFlowTransformer
@@ -25,11 +26,11 @@ case class WSCommand(cmd: Int, cmd2: Int)
 @Singleton
 class WebSocketApplication @Inject()(implicit system: ActorSystem, materializer: Materializer) extends Controller {
   implicit val inEventFormat = Json.format[InEvent]
-  implicit val outEventFormat = Json.format[OutEvent]
+  implicit val outEventFormat = Json.format[UserInfo]
 
-  implicit val messageFlowTransformer: MessageFlowTransformer[InEvent, OutEvent] = MessageFlowTransformer.jsonMessageFlowTransformer[InEvent, OutEvent]
+  implicit val messageFlowTransformer: MessageFlowTransformer[InEvent, UserInfo] = MessageFlowTransformer.jsonMessageFlowTransformer[InEvent, UserInfo]
 
-  def socket = WebSocket.acceptOrResult[InEvent, OutEvent] { request =>
+  def socket = WebSocket.acceptOrResult[InEvent, UserInfo] { request =>
     Future.successful(Right(ActorFlow.actorRef(WSActor.props)))
   }
 }
@@ -57,7 +58,9 @@ class WSActor(out: ActorRef) extends TopicActor {
       }
       testActor ! "test"
     case TestMessage(topic, message) =>
-      out ! OutEvent(message)
+      out ! UserInfo(message, "", "", Some(""), Some(""), 0L, "", 0L)
+    case user: UserInfo =>
+      out ! user
     case _ =>
       out ! OutEvent("Unknown")
   }

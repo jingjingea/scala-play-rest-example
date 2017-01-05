@@ -1,6 +1,6 @@
 
-import actor.MainActor
-import controllers.ScheduleApplication
+import actor.{CronActor, MainActor}
+import controllers.ScheduleApplication.schedulerApplication
 import org.slf4j.{Logger, LoggerFactory}
 import play.api._
 
@@ -18,6 +18,7 @@ object Global extends GlobalSettings {
   override def onStop(app: Application) {
     log.info("Application shutdown...")
     mydb.MyDatabase.close()
+    log.info(s"After shutting down schedule....")
 
     val system = app.actorSystem
     val mainActor = system.actorSelection("/user/`")
