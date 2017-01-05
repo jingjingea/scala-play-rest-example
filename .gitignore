@@ -17,3 +17,7 @@ dist
 /RUNNING_PID
 /.settings
 /conf/db-dev.conf
+factorials.txt
+test.txt
+TcpClient.class
+TcpClient.java

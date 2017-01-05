@@ -17,6 +17,8 @@ libraryDependencies ++= Seq(
   // slick
   "com.typesafe.slick" %% "slick" % "3.1.1",
   "com.typesafe.slick" %% "slick-hikaricp" % "3.1.1",
+  // akka
+  "com.typesafe.akka" %% "akka-remote" % "2.4.8",
   specs2 % Test
 )
 
