@@ -19,3 +19,6 @@ To test validation rules:
     curl -X POST http://localhost:9000/users -H "Content-Type: application/json" -d "{\"email\": \"test@test.com\"}"
 
 add
+
+
+change
